@@ -1,4 +1,4 @@
-package org.example.Exercicio01;
+package org.example.Controller;
 
 import io.javalin.Javalin;
 import org.example.Model.Tarefa;
@@ -9,7 +9,7 @@ import java.util.*;
 import java.time.Instant;
 import java.util.Map;
 
-public class Main {
+public class TarefaController {
     // Lista para armazenar as tarefas
     public static List<Tarefa> tarefas = new ArrayList<>();
     private static int ultimoId;
@@ -18,8 +18,7 @@ public class Main {
         return ++ultimoId;
     }
 
-    public static void main(String[] args) {
-        Javalin app = Javalin.create().start(7000);
+    public static void registrarRotas(Javalin app) {
 
         // 1. GET simples - resposta direta
         app.get("/hello", ctx -> ctx.result("Hello, Javalin!"));
@@ -64,7 +63,12 @@ public class Main {
             Optional<Tarefa> tarefa = tarefas.stream()
                     .filter(t -> t.getId() == id)
                     .findFirst();
-            ctx.json(tarefa.get());
+            if (tarefa.isPresent()) {
+                ctx.json(tarefa.get());
+            } else {
+                ctx.status(404).result("Tarefa com ID: " + id + " não encontrada");
+            };
         });
+
     }
 }
